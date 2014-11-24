@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="pathtracer_main.cpp" />
+    <ClCompile Include="Pathtracer.cpp">
+      <Filter>pathtracer</Filter>
+    </ClCompile>
+    <ClCompile Include="Intersection.cpp">
+      <Filter>pathtracer</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>pathtracer</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>pathtracer</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>pathtracer</Filter>
+    </ClCompile>
+    <ClCompile Include="MCSampling.cpp">
+      <Filter>pathtracer</Filter>
+    </ClCompile>
+    <ClCompile Include="Aabb.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="ray.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="glutil.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="OBJModel.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>pathtracer</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>pathtracer</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="simple.frag" />
+    <None Include="simple.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="pathtracer">
+      <UniqueIdentifier>{9e4f5f9d-971c-4807-a728-9ab2f4ef4426}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utils">
+      <UniqueIdentifier>{812bacd3-abea-4d2c-9e89-86543140102d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Pathtracer.h">
+      <Filter>pathtracer</Filter>
+    </ClInclude>
+    <ClInclude Include="Intersection.h">
+      <Filter>pathtracer</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>pathtracer</Filter>
+    </ClInclude>
+    <ClInclude Include="MCSampling.h">
+      <Filter>pathtracer</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>pathtracer</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>pathtracer</Filter>
+    </ClInclude>
+    <ClInclude Include="Aabb.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ray.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="glutil.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="OBJModel.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>pathtracer</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>pathtracer</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
