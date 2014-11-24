@@ -111,17 +111,26 @@ float3 Pathtracer::Li(const chag::ray &r, const Intersection &isect)
 	// mat is the material at the intersection
 	Material			&mat = *isectp->m_material; 
 	// wi is the incoming direction
-	float3 wi = -r.d; 
+	float3 wi = -r.d;
 
 	for(unsigned int i=0; i<m_scene->m_lights.size(); i++) {
 		// Sample a position on the area light
 		float3 lightSamplePos = m_scene->m_lights[i].sample(); 
 		// Calculate the outgoing direction towards that sample
-		float3 wo = normalize(lightSamplePos - isectp->m_position); 
-		// Add this lights contribution to the radiance
-		float3 Li =  m_scene->m_lights[i].Le(p); 
-		L += mat.f(wi, wo, *isectp) * Li * abs(dot(wo, n)); 
+		float3 wo = normalize(lightSamplePos - isectp->m_position);
+
+		ray shadowRay;
+		shadowRay.o = p + PT_EPSILON * n; // Bias the casting origin
+		shadowRay.d = wo;
+
+		if (!m_scene->intersectP(shadowRay))
+		{
+			// Add this lights contribution to the radiance
+			float3 Li = m_scene->m_lights[i].Le(p);
+			L += mat.f(wi, wo, *isectp) * Li * abs(dot(wo, n));
+		}
 	}
+
 	return L; 
 }
 
