@@ -3,6 +3,8 @@
 #include "ray.h"
 #include <float2.h>
 
+#include "MCSampling.h"
+
 using namespace chag; 
 using namespace std; 
 
@@ -69,8 +71,9 @@ void Pathtracer::tracePrimaryRays()
 	for(int y=0; y<m_frameBufferSize.y; y++) {
 		for(int x=0; x<m_frameBufferSize.x; x++) {
 			ray primaryRay; 
-			primaryRay.o = camera_pos; 
-			float2 screenCoord = make_vector(float(x)/float(m_frameBufferSize.x), float(y)/float(m_frameBufferSize.y));
+			primaryRay.o = camera_pos;
+
+			float2 screenCoord = make_vector(float(x + randf())/float(m_frameBufferSize.x), float(y + randf())/float(m_frameBufferSize.y));
 
 			primaryRay.d = normalize(min_d + 
 						   screenCoord.x * dX +  
