@@ -15,7 +15,7 @@ float3 DiffuseMaterial::sample_f(const float3 &i, float3 &o, const Intersection 
 {
 	const float3 &n = isect.m_normal; 
 	float3 tangent = normalize(perpendicular(n)); 
-	float3 bitangent = cross(n, tangent); 
+	float3 bitangent = cross(n, tangent);
 	float3 s = cosineSampleHemisphere();
 	o = normalize(s.x * tangent + s.y * bitangent + s.z * n);
 	pdf = cos(dot(isect.m_normal, o)) / M_PI;
