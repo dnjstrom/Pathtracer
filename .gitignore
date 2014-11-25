@@ -10,3 +10,6 @@
 *.pdb
 *Debug.lib
 Debug/*
+*_Release.*
+
+!scenes/*
