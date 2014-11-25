@@ -119,11 +119,19 @@ float3 Pathtracer::Li(const chag::ray &r, const Intersection &isect)
 		// Calculate the outgoing direction towards that sample
 		float3 wo = normalize(lightSamplePos - isectp->m_position);
 
+		// Cast a shadow ray
 		ray shadowRay;
-		shadowRay.o = p + PT_EPSILON * n; // Bias the casting origin
+		shadowRay.o = p + PT_EPSILON * n; // Bias the origin
 		shadowRay.d = wo;
+		Intersection intersection;
+		m_scene->intersect(shadowRay, intersection);
+		
+		// Check if the shadow ray intersection is closer than the light.
+		float distance = length(lightSamplePos - shadowRay.o) - length(intersection.m_position - shadowRay.o);
 
-		if (!m_scene->intersectP(shadowRay))
+		// The point is in light if the distance between the intersection point and the
+		// light source is negligible.
+		if(distance <= PT_EPSILON)
 		{
 			// Add this lights contribution to the radiance
 			float3 Li = m_scene->m_lights[i].Le(p);
