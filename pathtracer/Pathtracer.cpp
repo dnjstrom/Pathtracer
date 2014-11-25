@@ -100,44 +100,66 @@ void Pathtracer::tracePrimaryRays()
 ///////////////////////////////////////////////////////////////////////////
 float3 Pathtracer::Li(const chag::ray &r, const Intersection &isect)
 {
-	const Intersection *isectp = &isect; 
-
-	// Initialize return radiance
 	float3 L = make_vector(0.0f, 0.0f, 0.0f);
-	// p is the intersection point
-	const float3	&p = isectp->m_position; 
-	// n is the intersection normal
-	const float3	&n = isectp->m_normal; 
-	// mat is the material at the intersection
-	Material			&mat = *isectp->m_material; 
+	float3 pathThroughput = make_vector(1.0f, 1.0f, 1.0f);
+
+	ray currentRay = r;
+	Intersection currentIsec = isect;
+
 	// wi is the incoming direction
 	float3 wi = -r.d;
 
-	for(unsigned int i=0; i<m_scene->m_lights.size(); i++) {
-		// Sample a position on the area light
-		float3 lightSamplePos = m_scene->m_lights[i].sample(); 
-		// Calculate the outgoing direction towards that sample
-		float3 wo = normalize(lightSamplePos - isectp->m_position);
+	for (unsigned int bounces = 0; bounces < PT_MAX_BOUNCES; bounces++)
+	{
+		/* Direkt Illumination */
 
-		// Cast a shadow ray
-		ray shadowRay;
-		shadowRay.o = p + PT_EPSILON * n; // Bias the origin
-		shadowRay.d = wo;
-		Intersection intersection;
-		m_scene->intersect(shadowRay, intersection);
+		for (unsigned int i = 0; i<m_scene->m_lights.size(); i++) {
+			// Sample a position on the area light
+			float3 lightSamplePos = m_scene->m_lights[i].sample();
+			// Calculate the outgoing direction towards that sample
+			float3 wo = normalize(lightSamplePos - currentIsec.m_position);
+
+			// Cast a shadow ray
+			ray shadowRay;
+			shadowRay.o = currentIsec.m_position + PT_EPSILON * currentIsec.m_normal; // Bias the origin
+			shadowRay.d = wo;
+			Intersection intersection;
+			m_scene->intersect(shadowRay, intersection);
+
+			// Check if the shadow ray intersection is closer than the light.
+			float distance = length(lightSamplePos - shadowRay.o) - length(intersection.m_position - shadowRay.o);
+
+			// The point is in light if the distance between the intersection point and the
+			// light source is negligible.
+			if (distance <= PT_EPSILON)
+			{
+				// Add this lights contribution to the radiance
+				float3 Li = m_scene->m_lights[i].Le(currentIsec.m_position);
+				L += pathThroughput * currentIsec.m_material->f(wi, wo, currentIsec) * Li * abs(dot(wo, currentIsec.m_normal));
+			}
+		}
+
+
+		/* Indirect illumination */
+
+		// Set up reflection ray
+		float3 wo;
+		float pdf;
+		float3 brdf = currentIsec.m_material->sample_f(wi, wo, currentIsec, pdf);
+
+		float cosineterm = abs(dot(wo, currentIsec.m_normal));
+
+		pathThroughput = pathThroughput * (brdf * cosineterm) / pdf;
+		// If pathThroughput is too small there is no need to continue
+		if (pathThroughput[0] < PT_EPSILON &&			pathThroughput[1] < PT_EPSILON &&			pathThroughput[2] < PT_EPSILON)		{			return L;		}		// Create next ray on path		currentRay.o = currentIsec.m_position + PT_EPSILON * currentIsec.m_normal;
+		currentRay.d = wo;
 		
-		// Check if the shadow ray intersection is closer than the light.
-		float distance = length(lightSamplePos - shadowRay.o) - length(intersection.m_position - shadowRay.o);
-
-		// The point is in light if the distance between the intersection point and the
-		// light source is negligible.
-		if(distance <= PT_EPSILON)
+		if (!m_scene->intersect(currentRay, currentIsec))
 		{
-			// Add this lights contribution to the radiance
-			float3 Li = m_scene->m_lights[i].Le(p);
-			L += mat.f(wi, wo, *isectp) * Li * abs(dot(wo, n));
+			return L + pathThroughput * Lenvironment(currentRay);
 		}
 	}
+	
 
 	return L; 
 }
