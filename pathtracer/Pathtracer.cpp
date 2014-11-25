@@ -123,15 +123,11 @@ float3 Pathtracer::Li(const chag::ray &r, const Intersection &isect)
 			ray shadowRay;
 			shadowRay.o = currentIsec.m_position + PT_EPSILON * currentIsec.m_normal; // Bias the origin
 			shadowRay.d = wo;
-			Intersection intersection;
-			m_scene->intersect(shadowRay, intersection);
-
-			// Check if the shadow ray intersection is closer than the light.
-			float distance = length(lightSamplePos - shadowRay.o) - length(intersection.m_position - shadowRay.o);
+			shadowRay.maxt = length(lightSamplePos - currentIsec.m_position) - PT_EPSILON;
 
 			// The point is in light if the distance between the intersection point and the
 			// light source is negligible.
-			if (distance <= PT_EPSILON)
+			if (!m_scene->intersectP(shadowRay))
 			{
 				// Add this lights contribution to the radiance
 				float3 Li = m_scene->m_lights[i].Le(currentIsec.m_position);
@@ -151,7 +147,7 @@ float3 Pathtracer::Li(const chag::ray &r, const Intersection &isect)
 
 		pathThroughput = pathThroughput * (brdf * cosineterm) / pdf;
 		// If pathThroughput is too small there is no need to continue
-		if (pathThroughput[0] < PT_EPSILON &&			pathThroughput[1] < PT_EPSILON &&			pathThroughput[2] < PT_EPSILON)		{			return L;		}		// Create next ray on path		currentRay.o = currentIsec.m_position + PT_EPSILON * currentIsec.m_normal;
+		if (pathThroughput.x < PT_EPSILON &&			pathThroughput.y < PT_EPSILON &&			pathThroughput.z < PT_EPSILON)		{			return L;		}		// Create next ray on path		currentRay.o = currentIsec.m_position + PT_EPSILON * currentIsec.m_normal;
 		currentRay.d = wo;
 		
 		if (!m_scene->intersect(currentRay, currentIsec))
