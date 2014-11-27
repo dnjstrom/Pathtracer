@@ -7,6 +7,7 @@
 #include "Aabb.h"
 #include "Light.h"
 #include "Camera.h"
+#include "BvhNode.h"
 
 class Triangle
 {
@@ -20,6 +21,7 @@ public:
 
 class Scene
 {
+	void constructBvh();
 public:
 	Scene(void);
 	~Scene(void);
@@ -28,6 +30,7 @@ public:
 	std::vector<Triangle> m_triangles; 
 	virtual void buildFromObj(OBJModel *model); 
 	virtual bool intersect(const chag::ray &r, Intersection &isect); 
-	virtual bool intersectP(const chag::ray &r); 
+	virtual bool intersectP(const chag::ray &r);
+	BvhNode *bvh;
 };
 

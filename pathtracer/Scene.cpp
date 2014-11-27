@@ -2,6 +2,8 @@
 #include "MCSampling.h"
 #include <iostream>
 
+#include "BvhNode.h"
+
 using namespace chag; 
 using namespace std; 
 
@@ -39,6 +41,7 @@ bool Scene::intersectP(const chag::ray &r)
 	}
 	return false; 
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Buid a Scene object from an OBJ file
@@ -116,6 +119,9 @@ void Scene::buildFromObj(OBJModel *model)
 			m_triangles.push_back(triangle); 
 		}
 	}
+
+	/* Construct BVH */
+	bvh = new BvhNode(m_triangles);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
